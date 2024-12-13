@@ -1,5 +1,6 @@
 import Footer from './components/Footer';
 import Header from './components/Header';
+import HomePage from './pages/HomePage';
 
 const App = () => {
 	return (
@@ -7,7 +8,7 @@ const App = () => {
 			<Header />
 			<main>
 				<div className='container'>
-					<h1>Welcome to Gizmo-Galaxy</h1>;
+					<HomePage />
 				</div>
 			</main>
 			<Footer />
