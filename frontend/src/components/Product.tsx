@@ -1,4 +1,5 @@
 import { Product as ProductModel } from '../models/product';
+import { Link } from 'react-router-dom';
 
 interface ProductProps {
 	product: ProductModel;
@@ -7,17 +8,17 @@ interface ProductProps {
 const Product = ({ product }: ProductProps) => {
 	return (
 		<div className='product-card'>
-			<a href={`/product/${product._id}`}>
+			<Link to={`/product/${product._id}`}>
 				<img
 					src={product.image}
 					alt={product.name}
 					className='product-card__image'
 				/>
-			</a>
+			</Link>
 			<div className='product-card__body'>
-				<a href={`/product/${product._id}`}>
+				<Link to={`/product/${product._id}`}>
 					<strong>{product.name}</strong>
-				</a>
+				</Link>
 			</div>
 			<div className='product-card__price'>
 				<h3>${product.price}</h3>

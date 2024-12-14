@@ -1,12 +1,14 @@
+import { Link } from 'react-router-dom';
+
 const Header = () => {
 	return (
 		<header>
 			<nav>
 				<div className='container'>
 					<div className='logo'>
-						<a href='/'>
+						<Link to={'/'}>
 							<img src='' alt='Website Logo' />
-						</a>
+						</Link>
 					</div>
 					<ul>
 						<li></li>

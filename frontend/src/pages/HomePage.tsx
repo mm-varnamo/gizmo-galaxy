@@ -1,3 +1,4 @@
+import Product from '../components/Product';
 import products from '../products';
 
 const HomePage = () => {
@@ -7,7 +8,7 @@ const HomePage = () => {
 			<ul>
 				{products.map((product) => (
 					<li>
-						<h3>{product.name}</h3>
+						<Product product={product} />
 					</li>
 				))}
 			</ul>
