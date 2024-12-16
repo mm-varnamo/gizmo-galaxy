@@ -1,5 +1,6 @@
 import { Product as ProductModel } from '../models/product';
 import { Link } from 'react-router-dom';
+import Rating from './Rating';
 
 interface ProductProps {
 	product: ProductModel;
@@ -19,6 +20,9 @@ const Product = ({ product }: ProductProps) => {
 				<Link to={`/product/${product._id}`}>
 					<strong>{product.name}</strong>
 				</Link>
+				<div className='product-card__rating'>
+					<Rating value={product.rating} numReviews={product.numReviews} />
+				</div>
 			</div>
 			<div className='product-card__price'>
 				<h3>${product.price}</h3>
