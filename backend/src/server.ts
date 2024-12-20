@@ -2,7 +2,10 @@ import express from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
+import connectDB from '../config/db';
 import products from '../data/products';
+
+connectDB();
 
 const app = express();
 
