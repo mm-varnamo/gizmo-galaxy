@@ -1,27 +1,4 @@
-import mongoose, { Document } from 'mongoose';
-
-interface Review {
-	user: mongoose.Types.ObjectId;
-	name: string;
-	rating: number;
-	comment: string;
-}
-
-interface Product {
-	user: mongoose.Types.ObjectId;
-	name: string;
-	image: string;
-	brand: string;
-	category: string;
-	description: string;
-	reviews: Review[];
-	rating: number;
-	numReviews: number;
-	price: number;
-	countInStock: number;
-	createdAt: Date;
-	updatedAt: Date;
-}
+import mongoose from 'mongoose';
 
 const reviewSchema = new mongoose.Schema(
 	{
@@ -51,7 +28,7 @@ const reviewSchema = new mongoose.Schema(
 	}
 );
 
-const productSchema = new mongoose.Schema<Product>(
+const productSchema = new mongoose.Schema(
 	{
 		user: {
 			type: mongoose.Schema.Types.ObjectId,
@@ -109,6 +86,6 @@ const productSchema = new mongoose.Schema<Product>(
 	}
 );
 
-const Product = mongoose.model<Product>('Product', productSchema);
+const Product = mongoose.model('Product', productSchema);
 
 export default Product;
