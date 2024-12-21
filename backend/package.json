@@ -4,6 +4,7 @@
 	"main": "dist/server.js",
 	"license": "MIT",
 	"dependencies": {
+		"bcryptjs": "^2.4.3",
 		"express": "^4.21.2",
 		"mongoose": "^8.9.2"
 	},
@@ -11,6 +12,7 @@
 		"start": "nodemon src/server.ts"
 	},
 	"devDependencies": {
+		"@types/bcryptjs": "^2.4.6",
 		"@types/express": "^5.0.0",
 		"@types/mongoose": "^5.11.97",
 		"dotenv": "^16.4.7",

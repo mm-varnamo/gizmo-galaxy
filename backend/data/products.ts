@@ -1,6 +1,5 @@
 const products = [
 	{
-		_id: '1',
 		name: 'iPhone 16 Pro Max',
 		image: '/images/phone.webp',
 		description: `The iPhone 16 Pro Max features the powerful A18 Pro chip, delivering top-tier performance for gaming and computational tasks, along with enhanced battery efficiency. Its camera system includes a 48MP Ultra Wide lens for detailed macro and landscape shots, advanced photographic styles, and 4K 120fps video recording for exceptional visuals and creative flexibilit`,
@@ -12,7 +11,6 @@ const products = [
 		numReviews: 8,
 	},
 	{
-		_id: '2',
 		name: 'MacBook Pro Max',
 		image: '/images/laptop.webp',
 		description:
