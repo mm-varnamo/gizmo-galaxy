@@ -1,9 +1,10 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import path from 'path';
 import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 import connectDB from '../config/db';
-import products from '../data/products';
+import productRoutes from '../routes/productRoutes';
+import createHttpError, { isHttpError } from 'http-errors';
 
 connectDB();
 
@@ -15,14 +16,23 @@ app.get('/', (req, res) => {
 	res.send('API is running...');
 });
 
-app.get('/api/products', (req, res) => {
-	res.json(products);
+app.use('/api/products', productRoutes);
+
+app.use((req, res, next) => {
+	next(createHttpError(404, 'Endpoint not found'));
 });
 
-// app.get('/api/products/:id', (req, res) => {
-// 	const product = products.find((product) => product._id === req.params.id);
-// 	res.json(product);
-// });
+app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
+	console.error(error);
+	let errorMessage = 'An unknown error occurred';
+	let statusCode = 500;
+
+	if (isHttpError(error)) {
+		statusCode = error.status;
+		errorMessage = error.message;
+	}
+	res.status(statusCode).json({ error: errorMessage });
+});
 
 app.listen(PORT, () => {
 	console.log(`Server is running on port: ${PORT}`);
