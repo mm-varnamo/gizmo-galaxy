@@ -9,7 +9,9 @@
 		"mongoose": "^8.9.2"
 	},
 	"scripts": {
-		"start": "nodemon src/server.ts"
+		"start": "nodemon src/server.ts",
+		"data:import": "ts-node seeder.ts",
+		"data:destroy": "ts-node seeder.ts -d"
 	},
 	"devDependencies": {
 		"@types/bcryptjs": "^2.4.6",
