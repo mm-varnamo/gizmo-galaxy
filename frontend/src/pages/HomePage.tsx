@@ -1,35 +1,55 @@
-import { useEffect, useState } from 'react';
 import Product from '../components/Product';
-import { Product as ProductModel } from '../models/product';
-import axios from 'axios';
+import { useGetProductsQuery } from '../slices/productsApiSlice';
+import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
+import { SerializedError } from '@reduxjs/toolkit';
 
 const HomePage = () => {
-	const [products, setProducts] = useState<ProductModel[] | null>(null);
-
-	useEffect(() => {
-		const fetchProducts = async () => {
-			const { data } = await axios.get('/api/products');
-			setProducts(data);
-		};
-
-		fetchProducts();
-	}, []);
+	const { data: products, isLoading, error } = useGetProductsQuery();
 
 	return (
 		<>
-			<h1>Latest Products</h1>
-			{products && (
-				<ul>
-					{products.map((product) => (
-						<li>
-							<Product product={product} />
-						</li>
-					))}
-				</ul>
+			{isLoading ? (
+				<h2>Loading...</h2>
+			) : error ? (
+				<div>
+					{isFetchBaseQueryError(error) ? (
+						<p>
+							{error.data &&
+							typeof error.data === 'object' &&
+							'message' in error.data
+								? String(error.data.message)
+								: 'An error occurred'}
+						</p>
+					) : isSerializedError(error) ? (
+						<p>{String(error.message) || 'An error occurred'}</p>
+					) : (
+						<p>Unknown error</p>
+					)}
+				</div>
+			) : !products || products.length === 0 ? (
+				<h2>No products found!</h2>
+			) : (
+				<>
+					<h1>Latest Products</h1>
+					<ul>
+						{products.map((product) => (
+							<li key={product._id}>
+								<Product product={product} />
+							</li>
+						))}
+					</ul>
+				</>
 			)}
-			{!products && <p>No products available!</p>}
 		</>
 	);
 };
 
 export default HomePage;
+
+function isFetchBaseQueryError(error: any): error is FetchBaseQueryError {
+	return typeof error.status !== 'undefined';
+}
+
+function isSerializedError(error: any): error is SerializedError {
+	return typeof error.message !== 'undefined';
+}
