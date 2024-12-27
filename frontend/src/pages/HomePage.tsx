@@ -1,32 +1,23 @@
 import Product from '../components/Product';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
 import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
-import { SerializedError } from '@reduxjs/toolkit';
+import Loader from '../components/Loader';
+import Message from '../components/Message';
 
 const HomePage = () => {
 	const { data: products, isLoading, error } = useGetProductsQuery();
 
 	return (
 		<>
-			{isLoading ? (
-				<h2>Loading...</h2>
-			) : error ? (
-				<div>
-					{isFetchBaseQueryError(error) ? (
-						<p>
-							{error.data &&
-							typeof error.data === 'object' &&
-							'message' in error.data
-								? String(error.data.message)
-								: 'An error occurred'}
-						</p>
-					) : isSerializedError(error) ? (
-						<p>{String(error.message) || 'An error occurred'}</p>
-					) : (
-						<p>Unknown error</p>
-					)}
-				</div>
-			) : !products || products.length === 0 ? (
+			{isLoading && <Loader loading={isLoading} size={100} />}
+			{error && isFetchBaseQueryError(error) && (
+				<Message type='alert'>
+					{error.data && typeof error.data === 'object' && 'error' in error.data
+						? String(error.data.error)
+						: 'Unknown Error'}
+				</Message>
+			)}
+			{!products || products.length === 0 ? (
 				<h2>No products found!</h2>
 			) : (
 				<>
@@ -48,8 +39,4 @@ export default HomePage;
 
 function isFetchBaseQueryError(error: any): error is FetchBaseQueryError {
 	return typeof error.status !== 'undefined';
-}
-
-function isSerializedError(error: any): error is SerializedError {
-	return typeof error.message !== 'undefined';
 }
