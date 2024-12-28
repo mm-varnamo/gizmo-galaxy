@@ -2,9 +2,9 @@ import { useParams } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import Rating from '../components/Rating';
 import { useGetProductDetailsQuery } from '../slices/productsApiSlice';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import isFetchBaseQueryError from '../utils/fetchErrorHandler';
 
 const ProductPage = () => {
 	const { id: productId } = useParams();
@@ -56,7 +56,3 @@ const ProductPage = () => {
 };
 
 export default ProductPage;
-
-function isFetchBaseQueryError(error: any): error is FetchBaseQueryError {
-	return typeof error.status !== 'undefined';
-}

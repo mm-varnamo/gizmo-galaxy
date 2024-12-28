@@ -1,8 +1,8 @@
 import Product from '../components/Product';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
-import { FetchBaseQueryError } from '@reduxjs/toolkit/query';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
+import isFetchBaseQueryError from '../utils/fetchErrorHandler';
 
 const HomePage = () => {
 	const { data: products, isLoading, error } = useGetProductsQuery();
@@ -36,7 +36,3 @@ const HomePage = () => {
 };
 
 export default HomePage;
-
-function isFetchBaseQueryError(error: any): error is FetchBaseQueryError {
-	return typeof error.status !== 'undefined';
-}
