@@ -25,7 +25,7 @@ const Product = ({ product }: ProductProps) => {
 				</div>
 			</div>
 			<div className='product-card__price'>
-				<h3>${product.price}</h3>
+				<h3>{product.price}&euro;</h3>
 			</div>
 		</div>
 	);
