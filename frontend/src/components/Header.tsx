@@ -3,6 +3,7 @@ import { FaShoppingCart } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Cart } from '../models/cart';
+import logo from '../assets/images/logo.png';
 
 const Header = () => {
 	const { cartItems } = useSelector((state: RootState) => state.cart);
@@ -14,7 +15,11 @@ const Header = () => {
 				<div className='container'>
 					<div className='logo'>
 						<Link to={'/'}>
-							<img src='' alt='Website Logo' />
+							<img
+								src={logo}
+								style={{ width: '20vw', height: '10vh' }}
+								alt='Website Logo'
+							/>
 						</Link>
 					</div>
 					<ul>
