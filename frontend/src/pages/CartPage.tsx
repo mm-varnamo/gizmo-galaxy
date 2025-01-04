@@ -4,7 +4,7 @@ import { FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import { RootState } from '../store';
 import { Cart as CartModel } from '../models/cart';
-import { addToCart } from '../slices/cartSlice';
+import { addToCart, removeFromCart } from '../slices/cartSlice';
 
 const CartPage = () => {
 	const navigate = useNavigate();
@@ -15,6 +15,14 @@ const CartPage = () => {
 
 	const addToCartHandler = async (item: CartModel, qty: number) => {
 		dispatch(addToCart({ ...item, qty }));
+	};
+
+	const removeFromCartHandler = async (id: string) => {
+		dispatch(removeFromCart(id));
+	};
+
+	const checkoutHandler = () => {
+		navigate('/login?redirect=/shipping');
 	};
 
 	return (
@@ -48,7 +56,7 @@ const CartPage = () => {
 										))}
 									</select>
 								</div>
-								<button>
+								<button onClick={() => removeFromCartHandler(item._id)}>
 									<FaTrash />
 								</button>
 							</li>
@@ -75,7 +83,9 @@ const CartPage = () => {
 					€
 				</p>
 			</div>
-			<button disabled={cartItems.length === 0}>Proceed To Checkout</button>
+			<button disabled={cartItems.length === 0} onClick={checkoutHandler}>
+				Proceed To Checkout
+			</button>
 		</div>
 	);
 };
