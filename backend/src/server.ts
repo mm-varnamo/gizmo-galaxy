@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: path.resolve(__dirname, '../.env') });
 import connectDB from '../config/db';
 import productRoutes from '../routes/productRoutes';
+import userRoutes from '../routes/userRoutes';
 import createHttpError, { isHttpError } from 'http-errors';
 
 connectDB();
@@ -17,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/products', productRoutes);
+app.use('/api/users', userRoutes);
 
 app.use((req, res, next) => {
 	next(createHttpError(404, 'Endpoint not found'));
