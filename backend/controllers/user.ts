@@ -1,8 +1,10 @@
 import mongoose from 'mongoose';
+import env from '../utils/envalid';
 import { RequestHandler } from 'express';
 import createHttpError from 'http-errors';
 import User from '../models/userModel';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 export const loginUser: RequestHandler = async (req, res, next) => {
 	const { email, password } = req.body;
@@ -23,6 +25,17 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 		if (!passwordMatch) {
 			throw createHttpError(401, 'Invalid credentials');
 		}
+
+		const token = jwt.sign({ userId: user._id }, env.JWT_SECRET, {
+			expiresIn: '30d',
+		});
+
+		res.cookie('jwt', token, {
+			httpOnly: true,
+			secure: env.NODE_ENV !== 'development',
+			sameSite: 'strict',
+			maxAge: 30 * 24 * 60 * 60 * 1000,
+		});
 
 		const { _id, name, isAdmin } = user;
 
