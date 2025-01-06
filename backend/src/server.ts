@@ -1,19 +1,19 @@
+import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
-import path from 'path';
-import dotenv from 'dotenv';
-dotenv.config({ path: path.resolve(__dirname, '../.env') });
 import connectDB from '../config/db';
 import productRoutes from '../routes/productRoutes';
 import userRoutes from '../routes/userRoutes';
 import createHttpError, { isHttpError } from 'http-errors';
+import env from '../utils/envalid';
 
 connectDB();
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-const PORT = process.env.PORT || 5000;
+const PORT = env.PORT || 5000;
 
 app.get('/', (req, res) => {
 	res.send('API is running...');
