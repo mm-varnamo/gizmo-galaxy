@@ -2,9 +2,39 @@ import mongoose from 'mongoose';
 import { RequestHandler } from 'express';
 import createHttpError from 'http-errors';
 import User from '../models/userModel';
+import bcrypt from 'bcryptjs';
 
 export const loginUser: RequestHandler = async (req, res, next) => {
-	res.send('login user');
+	const { email, password } = req.body;
+
+	try {
+		const user = await User.findOne({ email });
+
+		if (!email || !password) {
+			throw createHttpError(400, 'Invalid credentials');
+		}
+
+		if (!user) {
+			throw createHttpError(401, 'Invalid credentials');
+		}
+
+		const passwordMatch = await bcrypt.compare(password, user.password);
+
+		if (!passwordMatch) {
+			throw createHttpError(401, 'Invalid credentials');
+		}
+
+		const { _id, name, isAdmin } = user;
+
+		res.status(201).json({
+			_id,
+			name,
+			email,
+			isAdmin,
+		});
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const registerUser: RequestHandler = async (req, res, next) => {
