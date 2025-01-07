@@ -1,10 +1,11 @@
 import 'dotenv/config';
 import express, { NextFunction, Request, Response } from 'express';
-import connectDB from '../config/db';
-import productRoutes from '../routes/productRoutes';
-import userRoutes from '../routes/userRoutes';
+import connectDB from './config/db';
+import productRoutes from './routes/productRoutes';
+import userRoutes from './routes/userRoutes';
 import createHttpError, { isHttpError } from 'http-errors';
-import env from '../utils/envalid';
+import env from './utils/envalid';
+import cookieParser from 'cookie-parser';
 
 connectDB();
 
@@ -12,6 +13,7 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 const PORT = env.PORT || 5000;
 
