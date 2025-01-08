@@ -55,7 +55,11 @@ export const registerUser: RequestHandler = async (req, res, next) => {
 };
 
 export const logoutUser: RequestHandler = async (req, res, next) => {
-	res.send('logout user');
+	res.cookie('jwt', '', {
+		httpOnly: true,
+		expires: new Date(0),
+	});
+	res.status(200).json({ message: 'Logged out successfully' });
 };
 
 export const getUserProfile: RequestHandler = async (req, res, next) => {
