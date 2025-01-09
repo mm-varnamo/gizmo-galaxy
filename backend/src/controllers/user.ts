@@ -1,10 +1,8 @@
-import mongoose from 'mongoose';
-import env from '../utils/envalid';
 import { RequestHandler } from 'express';
 import createHttpError from 'http-errors';
 import User from '../models/userModel';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
+import generateToken from '../utils/generateToken';
 
 export const loginUser: RequestHandler = async (req, res, next) => {
 	const { email, password } = req.body;
@@ -26,16 +24,7 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 			throw createHttpError(401, 'Invalid credentials');
 		}
 
-		const token = jwt.sign({ userId: user._id }, env.JWT_SECRET, {
-			expiresIn: '30d',
-		});
-
-		res.cookie('jwt', token, {
-			httpOnly: true,
-			secure: env.NODE_ENV !== 'development',
-			sameSite: 'strict',
-			maxAge: 30 * 24 * 60 * 60 * 1000,
-		});
+		generateToken(res, user._id);
 
 		const { _id, name, isAdmin } = user;
 
@@ -51,7 +40,38 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 };
 
 export const registerUser: RequestHandler = async (req, res, next) => {
-	res.send('register user');
+	const { name, email, password: passwordRaw } = req.body;
+
+	try {
+		if (!name || !email || !passwordRaw) {
+			throw createHttpError(400, 'Parameters missing');
+		}
+
+		const userExists = await User.findOne({ email });
+
+		if (userExists) {
+			throw createHttpError(400, 'User already exists');
+		}
+
+		const passwordHashed = await bcrypt.hash(passwordRaw, 12);
+
+		const user = await User.create({ name, email, password: passwordHashed });
+
+		if (user) {
+			generateToken(res, user._id);
+
+			res.status(201).json({
+				_id: user._id,
+				name: user.name,
+				email: user.email,
+				isAdmin: user.isAdmin,
+			});
+		} else {
+			throw createHttpError(400, 'Invalid user data');
+		}
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const logoutUser: RequestHandler = async (req, res, next) => {
