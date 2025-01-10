@@ -11,11 +11,11 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 		const user = await User.findOne({ email });
 
 		if (!email || !password) {
-			throw createHttpError(400, 'Invalid credentials');
+			throw createHttpError(400, 'Missing login credentials');
 		}
 
 		if (!user) {
-			throw createHttpError(401, 'Invalid credentials');
+			throw createHttpError(400, 'User not found');
 		}
 
 		const passwordMatch = await bcrypt.compare(password, user.password);
@@ -26,10 +26,10 @@ export const loginUser: RequestHandler = async (req, res, next) => {
 
 		generateToken(res, user._id);
 
-		const { _id, name, isAdmin } = user;
+		const { id, name, isAdmin } = user;
 
-		res.status(201).json({
-			_id,
+		res.status(200).json({
+			id,
 			name,
 			email,
 			isAdmin,
@@ -60,8 +60,8 @@ export const registerUser: RequestHandler = async (req, res, next) => {
 		if (user) {
 			generateToken(res, user._id);
 
-			res.status(201).json({
-				_id: user._id,
+			res.status(200).json({
+				id: user._id,
 				name: user.name,
 				email: user.email,
 				isAdmin: user.isAdmin,
@@ -83,11 +83,50 @@ export const logoutUser: RequestHandler = async (req, res, next) => {
 };
 
 export const getUserProfile: RequestHandler = async (req, res, next) => {
-	res.send('get user profile');
+	try {
+		const user = await User.findById(req.user?.id);
+
+		if (user) {
+			res.status(201).json({
+				id: user.id,
+				name: user.name,
+				email: user.email,
+				isAdmin: user.isAdmin,
+			});
+		} else {
+			throw createHttpError(404, 'User not found');
+		}
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const updateUserProfile: RequestHandler = async (req, res, next) => {
-	res.send('update user profile');
+	try {
+		const user = await User.findById(req.user?.id);
+
+		if (user) {
+			user.name = req.body.name || user.name;
+			user.email = req.body.email || user.email;
+
+			if (req.body.password) {
+				user.password = await bcrypt.hash(req.body.password, 12);
+			}
+
+			const updatedUser = await user.save();
+
+			res.status(200).json({
+				id: updatedUser._id,
+				name: updatedUser.name,
+				email: updatedUser.email,
+				isAdmin: updatedUser.isAdmin,
+			});
+		} else {
+			throw createHttpError(404, 'User not found');
+		}
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const getUsers: RequestHandler = async (req, res, next) => {
