@@ -4,10 +4,15 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { Cart } from '../models/cart';
 import logo from '../assets/images/logo.png';
+import DropdownButton from './DropdownButton';
 
 const Header = () => {
 	const { cartItems } = useSelector((state: RootState) => state.cart);
-	console.log(cartItems);
+	const { userInfo } = useSelector((state: RootState) => state.auth);
+
+	const logoutHandler = () => {
+		console.log('logout');
+	};
 
 	return (
 		<header>
@@ -33,9 +38,13 @@ const Header = () => {
 									)}
 							</Link>
 						</li>
-						<li>
-							<Link to='/login'>Login</Link>
-						</li>
+						{userInfo ? (
+							<DropdownButton user={userInfo.name} onLogout={logoutHandler} />
+						) : (
+							<li>
+								<Link to='/login'>Login</Link>
+							</li>
+						)}
 						<li></li>
 					</ul>
 				</div>
