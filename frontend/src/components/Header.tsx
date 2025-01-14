@@ -1,6 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaShoppingCart } from 'react-icons/fa';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useLogoutMutation } from '../slices/usersApiSlice';
+import { logout } from '../slices/authSlice';
 import { RootState } from '../store';
 import { Cart } from '../models/cart';
 import logo from '../assets/images/logo.png';
@@ -9,9 +11,19 @@ import DropdownButton from './DropdownButton';
 const Header = () => {
 	const { cartItems } = useSelector((state: RootState) => state.cart);
 	const { userInfo } = useSelector((state: RootState) => state.auth);
+	const [logoutApiCall] = useLogoutMutation();
 
-	const logoutHandler = () => {
-		console.log('logout');
+	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const logoutHandler = async () => {
+		try {
+			await logoutApiCall().unwrap();
+			dispatch(logout(userInfo));
+			navigate('/login');
+		} catch (error) {
+			console.log(error);
+		}
 	};
 
 	return (

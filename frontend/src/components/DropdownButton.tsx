@@ -32,4 +32,5 @@ const DropdownButton = ({ user, onLogout }: DropdownButtonProps) => {
 		</div>
 	);
 };
+
 export default DropdownButton;
