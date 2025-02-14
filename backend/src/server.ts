@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from 'express';
 import connectDB from './config/db';
 import productRoutes from './routes/productRoutes';
 import userRoutes from './routes/userRoutes';
+import orderRoutes from './routes/orderRoutes';
 import createHttpError, { isHttpError } from 'http-errors';
 import env from './utils/envalid';
 import cookieParser from 'cookie-parser';
@@ -23,6 +24,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/orders', orderRoutes);
 
 app.use((req, res, next) => {
 	next(createHttpError(404, 'Endpoint not found'));
