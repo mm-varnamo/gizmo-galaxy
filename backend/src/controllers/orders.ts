@@ -1,7 +1,20 @@
-import mongoose from 'mongoose';
 import { RequestHandler } from 'express';
 import createHttpError from 'http-errors';
 import Order from '../models/orderModel';
+import mongoose from 'mongoose';
+
+interface Product {
+	_id: mongoose.Types.ObjectId;
+	name: string;
+	image: string;
+	brand: string;
+	category: string;
+	description: string;
+	rating: number;
+	numReviews: number;
+	price: number;
+	countInStock: number;
+}
 
 export const addOrderItems: RequestHandler = async (req, res, next) => {
 	try {
@@ -19,7 +32,7 @@ export const addOrderItems: RequestHandler = async (req, res, next) => {
 			throw createHttpError(400, 'No order items');
 		} else {
 			const order = new Order({
-				orderItems: orderItems.map((item) => ({
+				orderItems: orderItems.map((item: Product) => ({
 					...item,
 					product: item._id,
 					_id: undefined,
