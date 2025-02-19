@@ -6,6 +6,7 @@ import {
 	Route,
 	RouterProvider,
 } from 'react-router-dom';
+import { PayPalScriptProvider } from '@paypal/react-paypal-js';
 import { Provider } from 'react-redux';
 import store from './store';
 import './index.css';
@@ -48,7 +49,9 @@ const root = ReactDOM.createRoot(
 root.render(
 	<React.StrictMode>
 		<Provider store={store}>
-			<RouterProvider router={router} />
+			<PayPalScriptProvider options={{ clientId: 'test' }} deferLoading={true}>
+				<RouterProvider router={router} />
+			</PayPalScriptProvider>
 		</Provider>
 	</React.StrictMode>
 );
