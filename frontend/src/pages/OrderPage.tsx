@@ -18,6 +18,7 @@ import {
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
+import OrderSummary from '../components/OrderSummary';
 
 const OrderPage = () => {
 	const { id: orderId } = useParams();
@@ -171,26 +172,7 @@ const OrderPage = () => {
 
 				<div>
 					<div>
-						<h2>Order Summary</h2>
-					</div>
-					<div>
-						<div>
-							<p>Items</p>
-							<p>{order.itemsPrice}&euro;</p>
-						</div>
-						<div>
-							<p>Shipping</p>
-							<p>{order.shippingPrice}&euro;</p>
-						</div>
-						<div>
-							<p>Tax</p>
-							<p>{order.taxPrice}&euro;</p>
-						</div>
-						<div>
-							<p>Total</p>
-							<p>{order.totalPrice}&euro;</p>
-						</div>
-
+						<OrderSummary order={order} />
 						{!order.isPaid && (
 							<div>
 								{isPaymentLoading && (

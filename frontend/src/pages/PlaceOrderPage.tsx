@@ -10,6 +10,7 @@ import { useCreateOrderMutation } from '../slices/ordersApiSlice';
 import { clearCartItems } from '../slices/cartSlice';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
 import { ApiError } from '../types/apiTypes';
+import OrderSummary from '../components/OrderSummary';
 
 const PlaceOrderPage = () => {
 	const navigate = useNavigate();
@@ -90,19 +91,7 @@ const PlaceOrderPage = () => {
 					</div>
 				</div>
 				<div>
-					<h2>Order Summary</h2>
-					<div>
-						<p>Items: {cart.itemsPrice}&euro;</p>
-					</div>
-					<div>
-						<p>Shipping: {cart.shippingPrice}&euro;</p>
-					</div>
-					<div>
-						<p>Tax: {cart.taxPrice}&euro;</p>
-					</div>
-					<div>
-						<p>Total: {cart.totalPrice}&euro;</p>
-					</div>
+					<OrderSummary order={cart} />
 					<div>
 						{error && isFetchBaseQueryError(error) && (
 							<Message type='alert'>
