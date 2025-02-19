@@ -7,6 +7,11 @@ import { useProfileMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { RootState } from '../store';
 import { ApiError } from '../types/apiTypes';
+import { useGetMyOrdersQuery } from '../slices/ordersApiSlice';
+import isFetchBaseQueryError from '../utils/fetchErrorHandler';
+import { OrderItem } from '../models/order';
+import { FaTimes } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 
 const ProfilePage = () => {
 	const [name, setName] = useState('');
@@ -20,6 +25,8 @@ const ProfilePage = () => {
 
 	const [updateProfile, { isLoading: profileUpdateIsLoading }] =
 		useProfileMutation();
+
+	const { data: orders, isLoading, error } = useGetMyOrdersQuery(null);
 
 	useEffect(() => {
 		if (userInfo) {
@@ -96,7 +103,67 @@ const ProfilePage = () => {
 					)}
 				</form>
 			</div>
-			<div>col2</div>
+			<div>
+				<h2>My Orders</h2>
+				{error && isFetchBaseQueryError(error) && (
+					<Message type='alert'>
+						{error.data &&
+						typeof error.data === 'object' &&
+						'error' in error.data
+							? String(error.data.error)
+							: 'Unknown Error'}
+					</Message>
+				)}
+				{isLoading && !error ? (
+					<Loader loading={isLoading} size={10} />
+				) : (
+					<table>
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>DATE</th>
+								<th>TOTAL</th>
+								<th>PAID</th>
+								<th>DELIVERED</th>
+								<th></th>
+							</tr>
+						</thead>
+
+						<tbody>
+							{!orders ? (
+								<p>No Orders</p>
+							) : (
+								orders.map((order: OrderItem) => (
+									<tr key={order._id}>
+										<td>{order._id}</td>
+										<td>{order.createdAt.substring(0, 10)}</td>
+										<td>{order.totalPrice}&euro;</td>
+										<td>
+											{order.isPaid ? (
+												order.paidAt.substring(0, 10)
+											) : (
+												<FaTimes style={{ color: 'red' }} />
+											)}
+										</td>
+										<td>
+											{order.isDelivered ? (
+												order.deliveredAt.substring(0, 10)
+											) : (
+												<FaTimes style={{ color: 'red' }} />
+											)}
+										</td>
+										<td>
+											<Link to={`/order/${order._id}`}>
+												<button>Details</button>
+											</Link>
+										</td>
+									</tr>
+								))
+							)}
+						</tbody>
+					</table>
+				)}
+			</div>
 		</div>
 	);
 };
