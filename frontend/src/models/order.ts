@@ -5,4 +5,10 @@ export interface OrderItem {
 	image: string;
 	price: number;
 	product: string;
+	totalPrice: number;
+	isPaid: boolean;
+	paidAt: string;
+	isDelivered: boolean;
+	deliveredAt: string;
+	createdAt: string;
 }
