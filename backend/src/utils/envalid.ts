@@ -5,4 +5,5 @@ export default cleanEnv(process.env, {
 	PORT: port(),
 	MONGO_URI: str(),
 	JWT_SECRET: str(),
+	PAYPAL_CLIENT_ID: str(),
 });
