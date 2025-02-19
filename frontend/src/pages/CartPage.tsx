@@ -39,7 +39,7 @@ const CartPage = () => {
 							<li key={item._id}>
 								<img src={item.image} alt={item.name} />
 								<Link to={`/product/${item._id}`}>{item.name}</Link>
-								<p>{item.price}</p>
+								<p>{item.price}&euro;</p>
 								<div>
 									<label htmlFor='quantity'>Quantity: </label>
 									<select
