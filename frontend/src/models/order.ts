@@ -11,4 +11,8 @@ export interface OrderItem {
 	isDelivered: boolean;
 	deliveredAt: string;
 	createdAt: string;
+	user: {
+		_id: string;
+		name: string;
+	};
 }
