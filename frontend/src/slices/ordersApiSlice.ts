@@ -1,5 +1,6 @@
 import { apiSlice } from './apiSlice';
 import { ORDERS_URL, PAYPAL_URL } from '../constants';
+import { OrderItem } from '../models/order';
 
 export const ordersApiSlice = apiSlice.injectEndpoints({
 	endpoints: (builder) => ({
@@ -35,7 +36,7 @@ export const ordersApiSlice = apiSlice.injectEndpoints({
 			}),
 			keepUnusedDataFor: 5,
 		}),
-		getOrders: builder.query({
+		getOrders: builder.query<OrderItem[], null>({
 			query: () => ({
 				url: ORDERS_URL,
 			}),
