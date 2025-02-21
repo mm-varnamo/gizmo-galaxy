@@ -122,7 +122,9 @@ export const updateOrderToDelivered: RequestHandler = async (
 
 export const getOrders: RequestHandler = async (req, res, next) => {
 	try {
-		res.send('get all orders');
+		const orders = await Order.find({}).populate('user', 'id name');
+
+		res.status(200).json(orders);
 	} catch (error) {
 		next(error);
 	}
