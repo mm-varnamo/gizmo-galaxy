@@ -114,7 +114,18 @@ export const updateOrderToDelivered: RequestHandler = async (
 	next
 ) => {
 	try {
-		res.send('update order to delivered');
+		const order = await Order.findById(req.params.id);
+
+		if (!order) {
+			throw createHttpError(404, 'Order not found');
+		}
+
+		order.isDelivered = true;
+		order.deliveredAt = new Date();
+
+		const updatedOrder = await order.save();
+
+		res.status(200).json(updatedOrder);
 	} catch (error) {
 		next(error);
 	}
