@@ -1,12 +1,16 @@
 export interface Product {
 	_id: string;
-	name: string;
-	image: string;
-	description: string;
 	brand: string;
 	category: string;
-	price: number;
 	countInStock: number;
-	rating: number;
+	createdAt: string;
+	description: string;
+	image: string;
+	name: string;
 	numReviews: number;
+	price: number;
+	rating: number;
+	reviews: [];
+	updatedAt: string;
+	user: string;
 }
