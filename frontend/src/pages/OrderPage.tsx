@@ -3,11 +3,11 @@ import { Link, useParams } from 'react-router-dom';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
-import { OrderItem } from '../models/order';
 import {
 	useGetOrderDetailsQuery,
 	usePayOrderMutation,
 	useGetPayPalClientIdQuery,
+	useDeliverOrderMutation,
 } from '../slices/ordersApiSlice';
 import {
 	DISPATCH_ACTION,
@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store';
 import OrderSummary from '../components/OrderSummary';
+import { ApiError } from '../types/apiTypes';
 
 const OrderPage = () => {
 	const { id: orderId } = useParams();
@@ -31,6 +32,9 @@ const OrderPage = () => {
 	} = useGetOrderDetailsQuery(orderId);
 
 	const [payOrder, { isLoading: isPaymentLoading }] = usePayOrderMutation();
+
+	const [deliverOrder, { isLoading: isDeliverLoading }] =
+		useDeliverOrderMutation();
 
 	const [{ isPending }, paypalDispatch] = usePayPalScriptReducer();
 
@@ -66,12 +70,6 @@ const OrderPage = () => {
 		}
 	}, [order, errorPayPal, isPayPalLoading, paypal, paypalDispatch]);
 
-	// const onApproveTest = async () => {
-	// 	await payOrder({ orderId, details: { payer: {} } });
-	// 	refetch();
-	// 	toast.success('Payment successful');
-	// };
-
 	const onApprove = (data: any, actions: any) => {
 		return actions.order.capture().then(async function (details: any) {
 			try {
@@ -102,6 +100,17 @@ const OrderPage = () => {
 			.then((orderId: any) => {
 				return orderId;
 			});
+	};
+
+	const deliverOrderHandler = async () => {
+		try {
+			await deliverOrder(order._id).unwrap();
+			refetch();
+			toast.success('Order set to delivered');
+		} catch (error) {
+			const apiError = error as ApiError;
+			toast.error(apiError?.data?.error || apiError.error);
+		}
 	};
 
 	if (isLoading) return <Loader loading={isLoading} size={10} />;
@@ -156,7 +165,7 @@ const OrderPage = () => {
 					<div>
 						<h2>Order Items</h2>
 						<ul>
-							{order.orderItems.map((item: OrderItem) => (
+							{order.orderItems.map((item: any) => (
 								<li key={item._id}>
 									<img src={item.image} alt={item.name} />
 									<Link to={`/product/${item.product}`}>{item.name}</Link>
@@ -196,7 +205,20 @@ const OrderPage = () => {
 							</div>
 						)}
 
-						{/* MARK AS DELIVERED PLACEHOLDER */}
+						{isDeliverLoading && (
+							<Loader loading={isDeliverLoading} size={10} />
+						)}
+
+						{userInfo &&
+							userInfo.isAdmin &&
+							order.isPaid &&
+							!order.isDelivered && (
+								<div>
+									<button type='button' onClick={deliverOrderHandler}>
+										Set to delivered
+									</button>
+								</div>
+							)}
 					</div>
 				</div>
 			</div>
