@@ -7,6 +7,7 @@ import { RootState } from '../store';
 import { Cart } from '../models/cart';
 import logo from '../assets/images/logo.png';
 import DropdownButton from './DropdownButton';
+import AdminDropdownButton from './AdminDropdownButton';
 
 const Header = () => {
 	const { cartItems } = useSelector((state: RootState) => state.cart);
@@ -51,7 +52,10 @@ const Header = () => {
 							</Link>
 						</li>
 						{userInfo ? (
-							<DropdownButton user={userInfo.name} onLogout={logoutHandler} />
+							<div>
+								<DropdownButton user={userInfo.name} onLogout={logoutHandler} />
+								{userInfo && userInfo.isAdmin && <AdminDropdownButton />}
+							</div>
 						) : (
 							<li>
 								<Link to='/login'>Login</Link>
