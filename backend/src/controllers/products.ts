@@ -31,3 +31,25 @@ export const getProductById: RequestHandler = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const createProduct: RequestHandler = async (req, res, next) => {
+	try {
+		const product = new Product({
+			name: 'Sample name',
+			price: 0,
+			user: req.user?.id,
+			image: '/images/sample.jpg',
+			brand: 'Sample brand',
+			category: 'Sample category',
+			countInstock: 0,
+			numReviews: 0,
+			description: 'Sample description',
+		});
+
+		const createdProduct = await product.save();
+
+		res.status(201).json(createdProduct);
+	} catch (error) {
+		next(error);
+	}
+};
