@@ -56,8 +56,7 @@ export const createProduct: RequestHandler = async (req, res, next) => {
 
 export const updateProduct: RequestHandler = async (req, res, next) => {
 	try {
-		const { name, price, description, image, brand, category, countInStock } =
-			req.body;
+		const updates = req.body;
 
 		const product = await Product.findById(req.params.id);
 
@@ -65,13 +64,7 @@ export const updateProduct: RequestHandler = async (req, res, next) => {
 			throw createHttpError(404, 'Product not found');
 		}
 
-		product.name = name;
-		product.price = price;
-		product.description = description;
-		product.image = image;
-		product.brand = brand;
-		product.category = category;
-		product.countInStock = countInStock;
+		Object.assign(product, updates);
 
 		const updatedProduct = await product.save();
 
