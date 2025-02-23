@@ -1,12 +1,21 @@
-import { useGetProductsQuery } from '../slices/productsApiSlice';
+import {
+	useCreateProductMutation,
+	useGetProductsQuery,
+} from '../slices/productsApiSlice';
 import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
 import { Link } from 'react-router-dom';
+import { ApiError } from '../types/apiTypes';
+import { toast } from 'react-toastify';
 
 const ProductListPage = () => {
-	const { data: products, isLoading, error } = useGetProductsQuery();
+	const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+	const [
+		createProduct,
+		{ isLoading: createProductIsLoading, error: createProductError },
+	] = useCreateProductMutation();
 
 	console.log(products);
 
@@ -14,12 +23,35 @@ const ProductListPage = () => {
 		console.log(productId);
 	};
 
+	const onCreateProductHandler = async () => {
+		if (window.confirm('Are you sure you want to add a new product?')) {
+			try {
+				await createProduct(null).unwrap();
+				refetch();
+			} catch (error) {
+				const apiError = error as ApiError;
+				toast.error(apiError?.data?.error || apiError.error);
+			}
+		} else {
+			return;
+		}
+	};
+
 	return (
 		<>
 			<div>
 				<h1>Products</h1>
-				<button>
-					<FaEdit /> Create Product
+				<button
+					disabled={createProductIsLoading}
+					onClick={onCreateProductHandler}
+				>
+					{createProductIsLoading ? (
+						'Loading...'
+					) : (
+						<span>
+							<FaEdit /> Create Product
+						</span>
+					)}
 				</button>
 				{isLoading ? (
 					<Loader loading={isLoading} size={10} />
