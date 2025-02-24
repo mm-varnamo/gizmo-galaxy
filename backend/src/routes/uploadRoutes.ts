@@ -35,6 +35,9 @@ function checkFileType(file: Express.Multer.File, cb: FileFilterCallback) {
 
 const upload = multer({
 	storage,
+	fileFilter: (req, file, cb) => {
+		checkFileType(file, cb);
+	},
 });
 
 router.post('/', upload.single('image'), (req, res): void => {
