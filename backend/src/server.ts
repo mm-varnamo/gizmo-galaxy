@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import path from 'path';
 import express, { NextFunction, Request, Response } from 'express';
 import connectDB from './config/db';
 import productRoutes from './routes/productRoutes';
@@ -7,6 +8,7 @@ import orderRoutes from './routes/orderRoutes';
 import createHttpError, { isHttpError } from 'http-errors';
 import env from './utils/envalid';
 import cookieParser from 'cookie-parser';
+import uploadRoutes from './routes/uploadRoutes';
 
 connectDB();
 
@@ -25,6 +27,7 @@ app.get('/', (req, res) => {
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
+app.use('/api/upload', uploadRoutes);
 
 app.get('/api/config/paypal', (req, res) => {
 	res.send({ clientId: env.PAYPAL_CLIENT_ID });
@@ -33,6 +36,9 @@ app.get('/api/config/paypal', (req, res) => {
 app.use((req, res, next) => {
 	next(createHttpError(404, 'Endpoint not found'));
 });
+
+const __dirname = path.resolve();
+app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
 	console.error(error);
