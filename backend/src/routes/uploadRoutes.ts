@@ -9,7 +9,10 @@ const router = express.Router();
 
 const storage = multer.diskStorage({
 	destination(req, file, cb: DestinationCallback) {
-		cb(null, 'uploads/');
+		const uploadPath = path.resolve(__dirname, '..', '..', '..', 'uploads');
+		console.log('Uploading to:', uploadPath);
+
+		cb(null, uploadPath);
 	},
 	filename(req, file, cb: FileNameCallback) {
 		cb(
@@ -46,9 +49,11 @@ router.post('/', upload.single('image'), (req, res): void => {
 		return;
 	}
 
+	const imageUrl = `/uploads/${req.file.filename}`;
+
 	res.send({
 		message: 'Image Uploaded',
-		image: `/${req.file.path}`,
+		image: imageUrl,
 	});
 });
 

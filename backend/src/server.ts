@@ -33,12 +33,13 @@ app.get('/api/config/paypal', (req, res) => {
 	res.send({ clientId: env.PAYPAL_CLIENT_ID });
 });
 
+const uploadPath = path.resolve(__dirname, '..', '..', 'uploads');
+
+app.use('/uploads', express.static(uploadPath));
+
 app.use((req, res, next) => {
 	next(createHttpError(404, 'Endpoint not found'));
 });
-
-const __dirname = path.resolve();
-app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 app.use((error: unknown, req: Request, res: Response, next: NextFunction) => {
 	console.error(error);
