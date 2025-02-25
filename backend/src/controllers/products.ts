@@ -73,3 +73,19 @@ export const updateProduct: RequestHandler = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const deleteProduct: RequestHandler = async (req, res, next) => {
+	try {
+		const product = await Product.findById(req.params.id);
+
+		if (!product) {
+			throw createHttpError(404, 'Product not found');
+		}
+
+		await Product.deleteOne({ _id: product._id });
+
+		res.status(200).json({ message: 'Product was successfully deleted' });
+	} catch (error) {
+		next(error);
+	}
+};

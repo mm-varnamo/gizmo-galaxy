@@ -7,5 +7,11 @@ router.get('/', ProductsController.getProducts);
 router.post('/', isAuthenticated, isAdmin, ProductsController.createProduct);
 router.get('/:id', ProductsController.getProductById);
 router.put('/:id', isAuthenticated, isAdmin, ProductsController.updateProduct);
+router.delete(
+	'/:id',
+	isAuthenticated,
+	isAdmin,
+	ProductsController.deleteProduct
+);
 
 export default router;
