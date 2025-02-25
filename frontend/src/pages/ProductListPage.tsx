@@ -1,8 +1,9 @@
 import {
 	useCreateProductMutation,
 	useGetProductsQuery,
+	useDeleteProductMutation,
 } from '../slices/productsApiSlice';
-import { FaTimes, FaEdit, FaTrash } from 'react-icons/fa';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
@@ -12,15 +13,25 @@ import { toast } from 'react-toastify';
 
 const ProductListPage = () => {
 	const { data: products, isLoading, error, refetch } = useGetProductsQuery();
-	const [
-		createProduct,
-		{ isLoading: createProductIsLoading, error: createProductError },
-	] = useCreateProductMutation();
+	const [createProduct, { isLoading: createProductIsLoading }] =
+		useCreateProductMutation();
+	const [deleteProduct, { isLoading: deleteProductIsLoading }] =
+		useDeleteProductMutation();
 
 	console.log(products);
 
-	const onDeleteProductHandler = (productId: string) => {
-		console.log(productId);
+	const onDeleteProductHandler = async (productId: string) => {
+		if (!window.confirm('Are you sure you want to delete this product?'))
+			return;
+
+		try {
+			const res = await deleteProduct(productId).unwrap();
+			toast.success(res.message);
+			refetch();
+		} catch (error) {
+			const apiError = error as ApiError;
+			toast.error(apiError?.data?.error || apiError.error);
+		}
 	};
 
 	const onCreateProductHandler = async () => {
@@ -88,7 +99,7 @@ const ProductListPage = () => {
 											<FaEdit />
 										</Link>
 										<button onClick={() => onDeleteProductHandler(product._id)}>
-											<FaTrash />
+											{deleteProductIsLoading ? '...' : <FaTrash />}
 										</button>
 									</td>
 								</tr>
