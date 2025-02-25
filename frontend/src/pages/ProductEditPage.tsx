@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 import {
 	useUpdateProductMutation,
 	useGetProductDetailsQuery,
+	useUploadProductImageMutation,
 } from '../slices/productsApiSlice';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
 import { ApiError } from '../types/apiTypes';
@@ -35,6 +36,9 @@ const ProductEditPage = () => {
 	const [updateProduct, { isLoading: updateProductIsLoading }] =
 		useUpdateProductMutation();
 
+	const [uploadProductImage, { isLoading: uploadProductImageIsLoading }] =
+		useUploadProductImageMutation();
+
 	useEffect(() => {
 		if (product) {
 			setFormData(product);
@@ -62,6 +66,29 @@ const ProductEditPage = () => {
 			toast.success('Product updated');
 			navigate('/admin/productlist');
 		} catch (error) {
+			const apiError = error as ApiError;
+			toast.error(apiError?.data?.error || apiError.error);
+		}
+	};
+
+	const onUploadImageHandler = async (
+		e: React.ChangeEvent<HTMLInputElement>
+	) => {
+		if (!e.target.files) return;
+
+		const formData = new FormData();
+
+		formData.append('image', e.target.files[0]);
+
+		try {
+			const response = await uploadProductImage(formData).unwrap();
+
+			console.log(response);
+
+			toast.success(response.message);
+			setFormData((prevData) => ({ ...prevData, image: response.image }));
+		} catch (error) {
+			console.log(error);
 			const apiError = error as ApiError;
 			toast.error(apiError?.data?.error || apiError.error);
 		}
@@ -111,7 +138,21 @@ const ProductEditPage = () => {
 							/>
 						</div>
 
-						<div>{/* IMAGE INPUT PLACEHOLDER */}</div>
+						<div>
+							<label htmlFor='image'>Image</label>
+							<input
+								id='image'
+								type='text'
+								placeholder='Enter image url'
+								value={formData.image}
+								onChange={handleChange}
+							/>
+							<input
+								type='file'
+								placeholder='Choose file'
+								onChange={onUploadImageHandler}
+							/>
+						</div>
 
 						<div>
 							<label htmlFor='brand'>Brand: </label>
