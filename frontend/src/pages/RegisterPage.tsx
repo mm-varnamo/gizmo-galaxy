@@ -9,10 +9,12 @@ import { RootState } from '../store';
 import { ApiError } from '../types/apiTypes';
 
 const RegisterPage = () => {
-	const [name, setName] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+	const [formData, setFormData] = useState({
+		name: '',
+		email: '',
+		password: '',
+		confirmPassword: '',
+	});
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -34,12 +36,13 @@ const RegisterPage = () => {
 	const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		if (password !== confirmPassword) {
+		if (formData.password !== formData.confirmPassword) {
 			toast.error('Passwords do not match');
 			return;
 		} else {
 			try {
-				const res = await register({ name, email, password }).unwrap();
+				const { confirmPassword, ...registerData } = formData;
+				const res = await register(registerData).unwrap();
 				dispatch(setCredentials({ ...res }));
 				navigate(redirect);
 			} catch (error) {
@@ -47,6 +50,13 @@ const RegisterPage = () => {
 				toast.error(apiError?.data?.error || apiError.error);
 			}
 		}
+	};
+
+	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData((prevData) => ({
+			...prevData,
+			[e.target.name]: e.target.value,
+		}));
 	};
 
 	return (
@@ -59,8 +69,9 @@ const RegisterPage = () => {
 						id='name'
 						type='text'
 						placeholder='Name'
-						value={name}
-						onChange={(e) => setName(e.target.value)}
+						value={formData.name}
+						name='name'
+						onChange={onChangeHandler}
 					/>
 				</div>
 				<div>
@@ -69,8 +80,9 @@ const RegisterPage = () => {
 						id='email'
 						type='email'
 						placeholder='Email'
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						value={formData.email}
+						name='email'
+						onChange={onChangeHandler}
 					/>
 				</div>
 				<div>
@@ -79,8 +91,9 @@ const RegisterPage = () => {
 						id='password'
 						type='password'
 						placeholder='Password'
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
+						value={formData.password}
+						name='password'
+						onChange={onChangeHandler}
 					/>
 				</div>
 				<div>
@@ -89,14 +102,14 @@ const RegisterPage = () => {
 						id='confirmPassword'
 						type='password'
 						placeholder='Confirm Password'
-						value={confirmPassword}
-						onChange={(e) => setConfirmPassword(e.target.value)}
+						value={formData.confirmPassword}
+						name='confirmPassword'
+						onChange={onChangeHandler}
 					/>
 				</div>
 				<button type='submit' disabled={isLoading}>
 					Register
 				</button>
-				{/* {isLoading && <Loader loading={isLoading} size={100} />} */}
 			</form>
 			<Link to={redirect ? `/login?redirect=${redirect}` : '/login'}>
 				Already have an account?
