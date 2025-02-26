@@ -9,8 +9,10 @@ import { RootState } from '../store';
 import { ApiError } from '../types/apiTypes';
 
 const LoginPage = () => {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+	const [formData, setFormData] = useState({
+		email: '',
+		password: '',
+	});
 
 	const dispatch = useDispatch();
 	const navigate = useNavigate();
@@ -32,13 +34,20 @@ const LoginPage = () => {
 	const submitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 		try {
-			const res = await login({ email, password }).unwrap();
+			const res = await login(formData).unwrap();
 			dispatch(setCredentials({ ...res }));
 			navigate(redirect);
 		} catch (error) {
 			const apiError = error as ApiError;
 			toast.error(apiError?.data?.error || apiError.error);
 		}
+	};
+
+	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData((prevData) => ({
+			...prevData,
+			[e.target.name]: e.target.value,
+		}));
 	};
 
 	return (
@@ -51,8 +60,9 @@ const LoginPage = () => {
 						id='email'
 						type='email'
 						placeholder='Email'
-						value={email}
-						onChange={(e) => setEmail(e.target.value)}
+						value={formData.email}
+						name='email'
+						onChange={onChangeHandler}
 					/>
 				</div>
 				<div>
@@ -61,14 +71,14 @@ const LoginPage = () => {
 						id='password'
 						type='password'
 						placeholder='Password'
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
+						value={formData.password}
+						name='password'
+						onChange={onChangeHandler}
 					/>
 				</div>
 				<button type='submit' disabled={isLoading}>
 					Login
 				</button>
-				{/* {isLoading && <Loader loading={isLoading} size={100} />} */}
 			</form>
 			<Link to={redirect ? `/register?redirect=${redirect}` : '/register'}>
 				Don't have an account?
