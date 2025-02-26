@@ -14,10 +14,12 @@ import { FaTimes } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 
 const ProfilePage = () => {
-	const [name, setName] = useState('');
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+	const [formData, setFormData] = useState({
+		name: '',
+		email: '',
+		password: '',
+		confirmPassword: '',
+	});
 
 	const dispatch = useDispatch();
 
@@ -30,25 +32,27 @@ const ProfilePage = () => {
 
 	useEffect(() => {
 		if (userInfo) {
-			setName(userInfo.name);
-			setEmail(userInfo.email);
+			setFormData((prevData) => ({
+				...prevData,
+				name: userInfo.name,
+				email: userInfo.email,
+			}));
 		}
 	}, [userInfo]);
 
 	const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		if (password !== confirmPassword) {
+		if (formData.password !== formData.confirmPassword) {
 			toast.error('The passwords do not match');
 			return;
 		}
 
 		try {
+			const { confirmPassword, ...profileData } = formData;
 			const response = await updateProfile({
 				_id: userInfo._id,
-				name,
-				email,
-				password,
+				...profileData,
 			}).unwrap();
 
 			dispatch(setCredentials(response));
@@ -60,6 +64,13 @@ const ProfilePage = () => {
 		}
 	};
 
+	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData((prevData) => ({
+			...prevData,
+			[e.target.name]: e.target.value,
+		}));
+	};
+
 	return (
 		<div>
 			<div>
@@ -67,35 +78,39 @@ const ProfilePage = () => {
 				<form onSubmit={onSubmitHandler}>
 					<label htmlFor='name'>Name</label>
 					<input
-						value={name}
+						value={formData.name}
 						placeholder='Enter name'
 						type='text'
 						id='name'
-						onChange={(e) => setName(e.target.value)}
+						name='name'
+						onChange={onChangeHandler}
 					/>
 					<label htmlFor='email'>Email</label>
 					<input
-						value={email}
+						value={formData.email}
 						placeholder='Enter email'
 						type='email'
 						id='email'
-						onChange={(e) => setEmail(e.target.value)}
+						name='email'
+						onChange={onChangeHandler}
 					/>
 					<label htmlFor='password'>Password</label>
 					<input
-						value={password}
+						value={formData.password}
 						placeholder='Enter password'
 						type='password'
 						id='password'
-						onChange={(e) => setPassword(e.target.value)}
+						name='password'
+						onChange={onChangeHandler}
 					/>
 					<label htmlFor='confirmPassword'>Confirm password</label>
 					<input
-						value={confirmPassword}
+						value={formData.confirmPassword}
 						placeholder='Confirm password'
 						type='password'
 						id='confirmPassword'
-						onChange={(e) => setConfirmPassword(e.target.value)}
+						name='confirmPassword'
+						onChange={onChangeHandler}
 					/>
 					<button type='submit'>Update</button>
 					{profileUpdateIsLoading && (
