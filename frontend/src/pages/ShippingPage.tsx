@@ -10,20 +10,27 @@ const ShippingPage = () => {
 	const cart = useSelector((state: RootState) => state.cart);
 	const { shippingAddress } = cart;
 
-	const [address, setAddress] = useState(shippingAddress?.address || '');
-	const [city, setCity] = useState(shippingAddress?.city || '');
-	const [postalCode, setPostalCode] = useState(
-		shippingAddress?.postalCode || ''
-	);
-	const [country, setCountry] = useState(shippingAddress?.country || '');
+	const [formData, setFormData] = useState({
+		address: shippingAddress?.address || '',
+		city: shippingAddress?.city || '',
+		postalCode: shippingAddress?.postalCode || '',
+		country: shippingAddress?.country || '',
+	});
 
 	const navigate = useNavigate();
 	const dispatch = useDispatch();
 
 	const submitHandler = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
-		dispatch(saveShippingAddress({ address, city, postalCode, country }));
+		dispatch(saveShippingAddress(formData));
 		navigate('/payment');
+	};
+
+	const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setFormData((prevData) => ({
+			...prevData,
+			[e.target.name]: e.target.value,
+		}));
 	};
 
 	return (
@@ -36,32 +43,36 @@ const ShippingPage = () => {
 					id='address'
 					type='text'
 					placeholder='Enter address'
-					value={address}
-					onChange={(e) => setAddress(e.target.value)}
+					value={formData.address}
+					name='address'
+					onChange={onChangeHandler}
 				/>
 				<label htmlFor='city'>City:</label>
 				<input
 					id='city'
 					type='text'
 					placeholder='Enter city'
-					value={city}
-					onChange={(e) => setCity(e.target.value)}
+					value={formData.city}
+					name='city'
+					onChange={onChangeHandler}
 				/>
 				<label htmlFor='postalCode'>Postal Code:</label>
 				<input
 					id='postalCode'
 					type='text'
 					placeholder='Enter postal code'
-					value={postalCode}
-					onChange={(e) => setPostalCode(e.target.value)}
+					value={formData.postalCode}
+					name='postalCode'
+					onChange={onChangeHandler}
 				/>
 				<label htmlFor='country'>Country:</label>
 				<input
 					id='country'
 					type='text'
 					placeholder='Enter country'
-					value={country}
-					onChange={(e) => setCountry(e.target.value)}
+					value={formData.country}
+					name='country'
+					onChange={onChangeHandler}
 				/>
 				<button type='submit'>Continue</button>
 			</form>
