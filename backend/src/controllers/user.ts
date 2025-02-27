@@ -130,17 +130,72 @@ export const updateUserProfile: RequestHandler = async (req, res, next) => {
 };
 
 export const getUsers: RequestHandler = async (req, res, next) => {
-	res.send('get all users (admin)');
+	try {
+		const users = await User.find({});
+
+		if (!users) {
+			throw createHttpError(404, 'No users not found');
+		}
+
+		res.status(200).json(users);
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const getUserById: RequestHandler = async (req, res, next) => {
-	res.send('get user by ID (admin)');
+	try {
+		const { id: userId } = req.params;
+
+		const user = await User.findById(userId).select('-password');
+
+		if (!user) {
+			throw createHttpError(404, 'User not found');
+		}
+
+		res.status(200).json(user);
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const deleteUser: RequestHandler = async (req, res, next) => {
-	res.send('delete user (admin)');
+	try {
+		const { id: userId } = req.params;
+
+		const user = await User.findById(userId);
+
+		if (!user) {
+			throw createHttpError(404, 'User not found');
+		}
+
+		if (user.isAdmin) {
+			throw createHttpError(400, 'Admin deletion not allowed');
+		}
+
+		await user.deleteOne({ _id: userId });
+		res.status(200).json({ message: 'User deleted successfully' });
+	} catch (error) {
+		next(error);
+	}
 };
 
 export const updateUser: RequestHandler = async (req, res, next) => {
-	res.send('update user (admin)');
+	try {
+		const { id: userId } = req.params;
+
+		const user = await User.findById(userId);
+
+		if (!user) {
+			throw createHttpError(404, 'User not found');
+		}
+
+		Object.assign(user, req.body);
+
+		const updatedUser = await user.save();
+
+		res.status(200).json(updatedUser);
+	} catch (error) {
+		next(error);
+	}
 };
