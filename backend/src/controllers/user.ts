@@ -131,7 +131,7 @@ export const updateUserProfile: RequestHandler = async (req, res, next) => {
 
 export const getUsers: RequestHandler = async (req, res, next) => {
 	try {
-		const users = await User.find({});
+		const users = await User.find({}).select('-password');
 
 		if (!users) {
 			throw createHttpError(404, 'No users not found');
