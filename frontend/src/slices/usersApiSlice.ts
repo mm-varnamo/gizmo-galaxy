@@ -1,4 +1,5 @@
 import { USERS_URL } from '../constants';
+import { User as UserModel } from '../models/user';
 import { apiSlice } from './apiSlice';
 
 export const usersApiSlice = apiSlice.injectEndpoints({
@@ -30,6 +31,13 @@ export const usersApiSlice = apiSlice.injectEndpoints({
 				body: data,
 			}),
 		}),
+		getUsers: builder.query<UserModel[], void>({
+			query: () => ({
+				url: USERS_URL,
+			}),
+			keepUnusedDataFor: 5,
+			providesTags: ['User'],
+		}),
 	}),
 });
 
@@ -38,4 +46,5 @@ export const {
 	useLogoutMutation,
 	useRegisterMutation,
 	useProfileMutation,
+	useGetUsersQuery,
 } = usersApiSlice;
