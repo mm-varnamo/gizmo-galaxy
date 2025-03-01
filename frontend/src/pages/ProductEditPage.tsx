@@ -29,9 +29,8 @@ const ProductEditPage = () => {
 	const {
 		data: product,
 		isLoading,
-		refetch,
 		error,
-	} = useGetProductDetailsQuery(productId);
+	} = useGetProductDetailsQuery(productId ?? '');
 
 	const [updateProduct, { isLoading: updateProductIsLoading }] =
 		useUpdateProductMutation();
@@ -58,10 +57,8 @@ const ProductEditPage = () => {
 	const onSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
 
-		const updatedProduct = { _id: productId, ...formData };
-
 		try {
-			await updateProduct(updatedProduct).unwrap();
+			await updateProduct(formData).unwrap();
 
 			toast.success('Product updated');
 			navigate('/admin/productlist');
@@ -82,9 +79,6 @@ const ProductEditPage = () => {
 
 		try {
 			const response = await uploadProductImage(formData).unwrap();
-
-			console.log(response);
-
 			toast.success(response.message);
 			setFormData((prevData) => ({ ...prevData, image: response.image }));
 		} catch (error) {
@@ -149,6 +143,7 @@ const ProductEditPage = () => {
 							/>
 							<input
 								type='file'
+								disabled={uploadProductImageIsLoading}
 								placeholder='Choose file'
 								onChange={onUploadImageHandler}
 							/>

@@ -21,7 +21,7 @@ const ProductPage = () => {
 		data: product,
 		isLoading,
 		error,
-	} = useGetProductDetailsQuery(productId);
+	} = useGetProductDetailsQuery(productId ?? '');
 
 	const addToCartHandler = () => {
 		dispatch(addToCart({ ...product, qty }));
