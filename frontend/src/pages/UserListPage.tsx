@@ -18,7 +18,7 @@ const UserListPage = () => {
 	const onDeleteHandler = async (userId: string) => {
 		if (!window.confirm('Are you sure you want to delete this user?')) return;
 		try {
-			const response = await deleteUser(userId);
+			const response = await deleteUser(userId).unwrap();
 			toast.success(response.data.message);
 		} catch (error) {
 			console.log(error);
@@ -66,7 +66,7 @@ const UserListPage = () => {
 										)}
 									</td>
 									<td>
-										<Link to={`admin/user/${user._id}/edit`}>
+										<Link to={`/admin/user/${user._id}/edit`}>
 											<FaEdit />
 										</Link>
 									</td>
