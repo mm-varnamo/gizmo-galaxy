@@ -13,5 +13,10 @@ router.delete(
 	isAdmin,
 	ProductsController.deleteProduct
 );
+router.post(
+	'/:id/reviews',
+	isAuthenticated,
+	ProductsController.createProductReview
+);
 
 export default router;

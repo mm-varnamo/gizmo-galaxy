@@ -89,3 +89,44 @@ export const deleteProduct: RequestHandler = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const createProductReview: RequestHandler = async (req, res, next) => {
+	const { rating, comment } = req.body;
+
+	try {
+		const product = await Product.findById(req.params.id);
+
+		if (!product) {
+			throw createHttpError(404, 'Product not found');
+		}
+
+		const alreadyReviewed = product.reviews.find(
+			(review) => review.user.toString() === req.user?.id.toString()
+		);
+
+		if (alreadyReviewed) {
+			throw createHttpError(400, 'Product already reviewed');
+		}
+
+		const review = {
+			name: req.user?.name,
+			rating: Number(rating),
+			comment,
+			user: req.user?.id,
+		};
+
+		product.reviews.push(review);
+
+		product.numReviews = product.reviews.length;
+
+		product.rating =
+			product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+			product.reviews.length;
+
+		await product.save();
+
+		res.status(201).json({ message: 'Review added' });
+	} catch (error) {
+		next(error);
+	}
+};
