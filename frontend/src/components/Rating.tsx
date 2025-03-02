@@ -2,7 +2,7 @@ import { FaStar, FaStarHalfAlt, FaRegStar } from 'react-icons/fa';
 
 interface RatingProps {
 	value: number;
-	numReviews: number;
+	numReviews?: number;
 }
 
 const Rating = ({ value, numReviews }: RatingProps) => {
@@ -17,9 +17,11 @@ const Rating = ({ value, numReviews }: RatingProps) => {
 			{[1, 2, 3, 4, 5].map((index) => (
 				<span className='rating__star'>{renderStar(index)}</span>
 			))}
-			<span className='rating__reviews'>
-				{numReviews ? `${numReviews} reviews` : '0 reviews'}
-			</span>
+			{numReviews && (
+				<span className='rating__reviews'>
+					{numReviews ? `${numReviews} reviews` : '0 reviews'}
+				</span>
+			)}
 		</div>
 	);
 };
