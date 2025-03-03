@@ -1,12 +1,16 @@
 import Product from '../components/Product';
+import { useParams } from 'react-router-dom';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
+import PaginationLinks from '../components/PaginationLinks';
 
 const HomePage = () => {
-	const { data: products, isLoading, error } = useGetProductsQuery();
+	const { pageNumber } = useParams();
 
+	const { data, isLoading, error } = useGetProductsQuery(pageNumber);
+	console.log(data);
 	return (
 		<>
 			{isLoading && <Loader loading={isLoading} size={100} />}
@@ -17,13 +21,13 @@ const HomePage = () => {
 						: 'Unknown Error'}
 				</Message>
 			)}
-			{!products || products.length === 0 ? (
+			{!data || !data.products || data.products.length === 0 ? (
 				<h2>No products found!</h2>
 			) : (
 				<>
 					<h1>Latest Products</h1>
 					<ul>
-						{products.map((product) => (
+						{data.products.map((product: any) => (
 							<li key={product._id}>
 								<Product product={product} />
 							</li>
@@ -31,6 +35,7 @@ const HomePage = () => {
 					</ul>
 				</>
 			)}
+			{data && <PaginationLinks pages={data.pages} activePage={data.page} />}
 		</>
 	);
 };

@@ -7,18 +7,19 @@ import { FaEdit, FaTrash } from 'react-icons/fa';
 import Message from '../components/Message';
 import Loader from '../components/Loader';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ApiError } from '../types/apiTypes';
 import { toast } from 'react-toastify';
+import PaginationLinks from '../components/PaginationLinks';
 
 const ProductListPage = () => {
-	const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+	const { pageNumber } = useParams();
+
+	const { data, isLoading, error, refetch } = useGetProductsQuery(pageNumber);
 	const [createProduct, { isLoading: createProductIsLoading }] =
 		useCreateProductMutation();
 	const [deleteProduct, { isLoading: deleteProductIsLoading }] =
 		useDeleteProductMutation();
-
-	console.log(products);
 
 	const onDeleteProductHandler = async (productId: string) => {
 		if (!window.confirm('Are you sure you want to delete this product?'))
@@ -87,7 +88,7 @@ const ProductListPage = () => {
 							</tr>
 						</thead>
 						<tbody>
-							{products?.map((product) => (
+							{data.products?.map((product: any) => (
 								<tr key={product._id}>
 									<td>{product._id}</td>
 									<td>{product.name}</td>
@@ -108,7 +109,13 @@ const ProductListPage = () => {
 					</table>
 				)}
 			</div>
-			<div></div>
+			{data && (
+				<PaginationLinks
+					pages={data.pages}
+					activePage={data.page}
+					isAdmin={true}
+				/>
+			)}
 		</>
 	);
 };
