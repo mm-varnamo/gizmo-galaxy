@@ -8,6 +8,7 @@ import { Cart } from '../models/cart';
 import logo from '../assets/images/logo.png';
 import DropdownButton from './DropdownButton';
 import AdminDropdownButton from './AdminDropdownButton';
+import SearchInput from './SearchInput';
 
 const Header = () => {
 	const { cartItems } = useSelector((state: RootState) => state.cart);
@@ -39,6 +40,9 @@ const Header = () => {
 								alt='Website Logo'
 							/>
 						</Link>
+					</div>
+					<div>
+						<SearchInput />
 					</div>
 					<ul>
 						<li>
