@@ -1,5 +1,5 @@
 import Product from '../components/Product';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useGetProductsQuery } from '../slices/productsApiSlice';
 import Loader from '../components/Loader';
 import Message from '../components/Message';
@@ -7,12 +7,16 @@ import isFetchBaseQueryError from '../utils/fetchErrorHandler';
 import PaginationLinks from '../components/PaginationLinks';
 
 const HomePage = () => {
-	const { pageNumber } = useParams();
+	const { pageNumber, keyword } = useParams();
 
-	const { data, isLoading, error } = useGetProductsQuery(pageNumber);
-	console.log(data);
+	const { data, isLoading, error } = useGetProductsQuery({
+		pageNumber,
+		keyword,
+	});
+
 	return (
 		<>
+			{keyword && <Link to='/'>Go Back</Link>}
 			{isLoading && <Loader loading={isLoading} size={100} />}
 			{error && isFetchBaseQueryError(error) && (
 				<Message type='alert'>
@@ -35,7 +39,13 @@ const HomePage = () => {
 					</ul>
 				</>
 			)}
-			{data && <PaginationLinks pages={data.pages} activePage={data.page} />}
+			{data && (
+				<PaginationLinks
+					pages={data.pages}
+					activePage={data.page}
+					keyword={keyword ? keyword : ''}
+				/>
+			)}
 		</>
 	);
 };
