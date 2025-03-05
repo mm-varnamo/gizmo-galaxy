@@ -15,7 +15,9 @@ import PaginationLinks from '../components/PaginationLinks';
 const ProductListPage = () => {
 	const { pageNumber } = useParams();
 
-	const { data, isLoading, error, refetch } = useGetProductsQuery(pageNumber);
+	const { data, isLoading, error, refetch } = useGetProductsQuery({
+		pageNumber,
+	});
 	const [createProduct, { isLoading: createProductIsLoading }] =
 		useCreateProductMutation();
 	const [deleteProduct, { isLoading: deleteProductIsLoading }] =
