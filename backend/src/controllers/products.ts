@@ -146,3 +146,17 @@ export const createProductReview: RequestHandler = async (req, res, next) => {
 		next(error);
 	}
 };
+
+export const getTopProducts: RequestHandler = async (req, res, next) => {
+	try {
+		const products = await Product.find({}).sort({ rating: -1 }).limit(3);
+
+		if (!products) {
+			throw createHttpError(404, 'No products found');
+		}
+
+		res.status(200).json(products);
+	} catch (error) {
+		next(error);
+	}
+};
