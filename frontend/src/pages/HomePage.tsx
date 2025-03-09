@@ -5,6 +5,7 @@ import Loader from '../components/Loader';
 import Message from '../components/Message';
 import isFetchBaseQueryError from '../utils/fetchErrorHandler';
 import PaginationLinks from '../components/PaginationLinks';
+import ProductCarousel from '../components/ProductCarousel';
 
 const HomePage = () => {
 	const { pageNumber, keyword } = useParams();
@@ -16,7 +17,7 @@ const HomePage = () => {
 
 	return (
 		<>
-			{keyword && <Link to='/'>Go Back</Link>}
+			{!keyword ? <ProductCarousel /> : <Link to='/'>Go Back</Link>}
 			{isLoading && <Loader loading={isLoading} size={100} />}
 			{error && isFetchBaseQueryError(error) && (
 				<Message type='alert'>
